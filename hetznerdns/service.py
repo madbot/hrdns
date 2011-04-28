@@ -8,6 +8,7 @@ class HDInvalidLoginData(Exception): pass
 class HDInvalidDomainAdd(Exception): pass
 class HDInvalidDomainDelete(Exception): pass
 class HDInvalidDomainShow(Exception): pass
+class HDInvalidDomainUpdate(Exception): pass
 
 class HetznerDns(object):
     login_url = 'https://robot.your-server.de/login/check'
@@ -74,8 +75,12 @@ class HetznerDns(object):
         
 
     def update_entries(self, domain_id, entries):
-        pass
-
+        request = self._request('/dns/update/', dict(id=domain_id, zonefile=entries))
+        request_data = request.read()
+        if request_data.find('Thank you for your order. The DNS entry will be updated now.') != -1:
+            return
+        raise HDInvalidDomainUpdate("Check syntax of your zonefile")
+    
     def get_domain_id(self, domain):
         domain_map = dict(self.list())
         domain_inv_map= dict((v,k) for k, v in domain_map.iteritems())
