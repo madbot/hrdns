@@ -7,6 +7,7 @@ from pyquery import PyQuery as pq
 class HDInvalidLoginData(Exception): pass
 class HDInvalidDomainAdd(Exception): pass
 class HDInvalidDomainDelete(Exception): pass
+class HDInvalidDomainShow(Exception): pass
 
 class HetznerDns(object):
     login_url = 'https://robot.your-server.de/login/check'
@@ -58,7 +59,25 @@ class HetznerDns(object):
         
     def delete(self, domain_id):
         request_data = self._request('/dns/delete', dict(delete='true', id=domain_id)).read()
-
         if request_data.find('Thank you for your order. The DNS entry will now be deleted.') != -1:
             return
         raise HDInvalidDomainDelete
+
+    
+    def get_entries(self, domain_id):
+        request = self._request('/dns/update/id/%s/' % domain_id, {'v':1})
+        document = pq(request.read())
+        zonefile = document("textarea[name=zonefile]")
+        if zonefile:
+            return zonefile.html()
+        raise HDInvalidDomainShow
+        
+
+    def update_entries(self, domain_id, entries):
+        pass
+
+    def get_domain_id(self, domain):
+        domain_map = dict(self.list())
+        domain_inv_map= dict((v,k) for k, v in domain_map.iteritems())
+        return domain_map[domain_id] if domain.isdigit() else domain_inv_map[domain]        
+        
