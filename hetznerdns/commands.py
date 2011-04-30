@@ -42,7 +42,7 @@ class UpdateEntryApp(WithDomainApp):
 @AddApp
 def command_add(app):
     print "Adding domain %s" % app.params.domain
-    client.add(app.params.domain, app.params.type, app.params.ip)
+    app.client.add(app.params.domain, app.params.type, app.params.ip)
 
 @ListApp
 def command_list(app):

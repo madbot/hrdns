@@ -1,3 +1,4 @@
+import os
 import cookielib
 import urllib2
 import urllib
@@ -9,10 +10,12 @@ class HDInvalidDomainAdd(Exception): pass
 class HDInvalidDomainDelete(Exception): pass
 class HDInvalidDomainShow(Exception): pass
 class HDInvalidDomainUpdate(Exception): pass
+class HDDomainNotFound(Exception): pass
 
 class HetznerDns(object):
     login_url = 'https://robot.your-server.de/login/check'
     base_url = 'https://robot.your-server.de'
+    
     def __init__(self, user, password):
         self.user = user
         self.password = password
@@ -36,15 +39,24 @@ class HetznerDns(object):
         
         if data.find('Welcome to your webinterface for server and domain administration.') != -1:
             return
-        raise HDInvalidLoginData
+        else:
+            document = pq(data)
+            error_p = document(".startpage_error")
+            error = error_p[0].text if error_p else 'Undefined Error'
+        raise HDInvalidLoginData(error)
     
     def add(self, domain, domain_type, ip):
         params = dict(domain=domain, type=domain_type, ip=ip)
         request = self._request("/dns/data", params)
         data = request.read()
         if data.find('Thank you for your order.') != -1:
-            return
-        raise HDInvalidDomainAdd
+            return            
+        document = pq(data)
+        errors = []
+        for error in document('.error_list li'):
+            i = [ x for x in error.getparent().getparent().getchildren() if x.tag.lower()=='input' ][0]
+            errors.append("%s: %s" % (i.attrib['name'], error.text))
+        raise HDInvalidDomainAdd(os.linesep.join(errors))
 
     def list(self):
         domains = []
@@ -76,13 +88,20 @@ class HetznerDns(object):
 
     def update_entries(self, domain_id, entries):
         request = self._request('/dns/update/', dict(id=domain_id, zonefile=entries))
-        request_data = request.read()
-        if request_data.find('Thank you for your order. The DNS entry will be updated now.') != -1:
+        data = request.read()
+        if data.find('Thank you for your order. The DNS entry will be updated now.') != -1:
             return
-        raise HDInvalidDomainUpdate("Check syntax of your zonefile")
+        document = pq(data)
+        errors = []
+        for error in document('.error_list li'):
+            errors.append(error.text)
+        raise HDInvalidDomainUpdate(os.linesep.join(errors))
     
     def get_domain_id(self, domain):
         domain_map = dict(self.list())
         domain_inv_map= dict((v,k) for k, v in domain_map.iteritems())
-        return domain_map[domain_id] if domain.isdigit() else domain_inv_map[domain]        
+        try:
+            return domain_map[domain_id] if domain.isdigit() else domain_inv_map[domain]
+        except KeyError:
+            raise HDDomainNotFound("Domain %s doesn't exist on hetzner dns." % domain)
         
