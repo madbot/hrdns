@@ -1,0 +1,15 @@
+Examples of usage
+=================
+
+List of maintaned domains:
+    hrobot_dns.py list -u<user> -p<password>
+    
+Add new domain:
+    hrobot_dns.py add -d domain.com -p 8.8.8.8
+
+Delete domain:
+    hrobot_dns.py delete -d domain.com
+    
+
+    
+    
