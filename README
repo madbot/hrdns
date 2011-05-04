@@ -5,11 +5,14 @@ List of maintaned domains:
     hrobot_dns.py list -u<user> -p<password>
     
 Add new domain:
-    hrobot_dns.py add -d domain.com -p 8.8.8.8
+    hrobot_dns.py add -u<user> -p<password> -d domain.com -p 8.8.8.8
 
 Delete domain:
-    hrobot_dns.py delete -d domain.com
-    
+    hrobot_dns.py delete -u<user> -p<password> -d domain.com
 
-    
+Dump dns records:
+    hrobot_dns.py show -u<user> -p<password> -d domain.com
+
+Updating dns recods (from file):
+    hrobot_dns.py update -u<user> -p<password> -d domain.com -f dnsrecords.txt
     

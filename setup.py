@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name= "hetznerdns",
-    version= str(int(time.time())), #"dev",
+    version= "dev",
     packages= find_packages(),
     install_requires= ['pyquery',],
     scripts= ['hetznerdns/bin/hrobot_dns.py',],
