@@ -9,7 +9,7 @@ Easy way:
     easy_install hrdns
     
 "Hard" way:
-    git clone git@github.com;jareks/hrdns
+    git clone git@github.com:jareks/hrdns
     cd hrdns
     python setup.py install
     
@@ -33,7 +33,7 @@ Updating dns recods (from file):
 
 FAQ
 ===
-Q: I've deleted domain but i'm still see it in `hrobot_dns.py list`!
+Q: I've deleted domain but it's still in `hrobot_dns.py list`!
 A: It's caused by delay of Hetzner's panel. I didn't find better solution than just wait.
 
 License notes
