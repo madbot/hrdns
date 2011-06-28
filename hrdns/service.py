@@ -60,7 +60,21 @@ class HetznerDns(object):
 
     def list(self):
         domains = []
-        request = self._request('/dns')
+        request = self._request('/dns/index/page/1')
+        document = pq(request.read())
+        pageli = document('ul.box_page li')
+        pages = ['1',]
+        for li in pageli:
+            if isinstance(li.text, basestring) and li.text.isdigit():
+                pages.append(li.text)
+        pages = list(set(pages))
+        for page in pages: 
+           domains.extend(self.get_page(page))
+        return domains
+
+    def get_page(self, page):
+        domains = []
+        request = self._request('/dns/index/page/%s' % page)
         document = pq(request.read())
         divs = document("div[id^='data_']")
         for div in divs:
