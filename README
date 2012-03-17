@@ -5,13 +5,11 @@ This tool covers dns-management in Hetzner's Robot panel.
 
 Installation
 ============
-Easy way:
+You need access to pstats module from python's standard library. On ubuntu it 
+can be installed by following command:
+    sudo apt-get installl python-profiler
+Then you can install hrdns by typing:
     easy_install hrdns
-    
-"Hard" way:
-    git clone git@github.com:jareks/hrdns
-    cd hrdns
-    python setup.py install
     
 Examples of commandline usage
 =============================
@@ -20,7 +18,7 @@ List of maintaned domains:
     hrobot_dns.py list -u<user> -p<password>
 
 Add new domain:
-    hrobot_dns.py add -u<user> -p<password> -d domain.com -p 8.8.8.8
+    hrobot_dns.py add -u<user> -p<password> -d domain.com -i 8.8.8.8
 
 Delete domain:
     hrobot_dns.py delete -u<user> -p<password> -d domain.com
