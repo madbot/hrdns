@@ -1,12 +1,10 @@
-import sys
-import time
 from setuptools import setup, find_packages
 
 setup(
     name= "hrdns",
     version= "dev",
     packages= find_packages(),
-    install_requires= ['pyquery',],
+    install_requires= ['pyquery', 'pyCli'],
     scripts= ['hrdns/bin/hrobot_dns.py',],
     author= 'Jarek S.',
     author_email= 'jarekps@sysd.pl',
