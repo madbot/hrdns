@@ -1,6 +1,8 @@
 import cli.app
 import time
+import ConfigParser
 import service
+import os
 import sys
 
 class BaseApp(cli.app.CommandLineApp):
@@ -8,10 +10,32 @@ class BaseApp(cli.app.CommandLineApp):
         super(BaseApp, self).__init__(*args, **kwargs)
         self.add_param('-u', '--user', default='')
         self.add_param('-p', '--password', default='')
-
+        config_path = os.path.join(os.getenv('HOME'), '.hrdnsrc')
+        try:
+            self.conf = ConfigParser.ConfigParser()
+            self.conf.readfp(open(config_path, 'rU+'))
+        except IOError:
+            self.conf = None
+        except ConfigParser.Error,e:
+            self.conf = None
+            print "Your config couldn't be parsed because:", e
+        
     def pre_run(self, *args, **kwargs):
         super(BaseApp, self).pre_run(*args, **kwargs)
-        self.client = service.HetznerDns(self.params.user, self.params.password)
+        try:
+            user = os.getenv('HRDNS_USER', None) or (self.conf.get('hrdns', 'user', None)\
+                    if self.conf else None) or self.params.user
+        except ConfigParser.Error,e:
+            print "Your config file is broken, cannot get user:",e
+            user = self.params.user
+
+        try:
+            password = os.getenv('HRDNS_PASSWORD', None) or (self.conf.get('hrdns', 'password', None)\
+                        if self.conf else None) or self.params.password
+        except ConfigParser.Error,e:
+            print "Your config file is broken, cannot get password", e
+            password = self.params.password
+        self.client = service.HetznerDns(user, password)
         self.client.login()        
 
 class AddApp(BaseApp):

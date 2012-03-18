@@ -29,6 +29,14 @@ Dump dns records:
 Updating dns recods (from file):
     hrobot_dns.py update -u<user> -p<password> -d domain.com -f dnsrecords.txt
 
+== Storing username and password in safe way == 
+There 3 ways to pass username/password to script: 
+1. Passing it through params (unsafe) 
+2. Environment variables HRDNS_USER, HRDNS_PASSWORD
+3. By creating file ~/.hrdnsrc with source like this:
+user=<user>
+password=<password> 
+
 FAQ
 ===
 Q: I've deleted domain but it's still in `hrobot_dns.py list`!
