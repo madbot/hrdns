@@ -2,7 +2,6 @@ import os
 import cookielib
 import urllib2
 import urllib
-import tempfile
 from pyquery import PyQuery as pq
 
 class HDInvalidLoginData(Exception): pass
@@ -19,7 +18,6 @@ class HetznerDns(object):
     def __init__(self, user, password):
         self.user = user
         self.password = password
-        #cookiejar = cookielib.LWPCookieJar(tempfile.mkstemp()[1])
         cookiejar = cookielib.CookieJar()
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
         self.opener = opener
@@ -115,7 +113,7 @@ class HetznerDns(object):
         domain_map = dict(self.list())
         domain_inv_map= dict((v,k) for k, v in domain_map.iteritems())
         try:
-            return domain_map[domain_id] if domain.isdigit() else domain_inv_map[domain]
+            return domain_map[domain] if domain.isdigit() else domain_inv_map[domain]
         except KeyError:
             raise HDDomainNotFound("Domain %s doesn't exist on hetzner dns." % domain)
         
