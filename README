@@ -31,9 +31,14 @@ Updating dns recods (from file):
 
 == Storing username and password in safe way == 
 There 3 ways to pass username/password to script: 
-1. Passing it through params (unsafe) 
-2. Environment variables HRDNS_USER, HRDNS_PASSWORD
+1. Passing it through params which is unsafe.
+2. Environment variables HRDNS_USER, HRDNS_PASSWORD like this:
+export HRDNS_USER=<user> 
+export HRDNS_PASSWORD=<password>
+hrobot_dns.py list
+
 3. By creating file ~/.hrdnsrc with source like this:
+[hrdns]
 user=<user>
 password=<password> 
 
